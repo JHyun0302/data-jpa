@@ -1,5 +1,6 @@
 package study.datajpa.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +39,12 @@ class MemberRepositoryTest {
 
     @PersistenceContext
     EntityManager em;
+
+
+    @BeforeEach
+    public void init() {
+        memberRepository.deleteAllInBatch();
+    }
 
     @Test
     public void testMember() {
@@ -194,6 +201,9 @@ class MemberRepositoryTest {
         assertThat(asdfasf.size()).isEqualTo(0);
     }
 
+    /**
+     * page로 찾으면 "select count" 쿼리도 같이 나감!
+     */
     @Test
     public void paging() {
         //given
