@@ -1,9 +1,14 @@
 package study.datajpa.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.repository.MemberRepository;
 
@@ -29,8 +34,28 @@ public class MemberController {
         return member.getUsername();
     }
 
+    /**
+     * Web 확장 - 페이징과 정렬(page, size, sort)
+     * http://localhost:8080/members?page=0&size=3&sort=id,desc&sort=username,desc
+     *
+     * @PageableDefault: 개별 설정... 글로벌 설정(.yml)
+     */
+    @GetMapping("/members")
+    public Page<MemberDto> list(@PageableDefault(size = 5, sort = "username", direction = Sort.Direction.DESC) Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        System.out.println("pageSize = " + pageSize);
+        Page<Member> page = memberRepository.findAll(pageable);
+
+        //Page 내용 -> Dto 변환
+        return page.map(MemberDto::new);
+    }
+
     @PostConstruct
+
     public void init() {
-        memberRepository.save(new Member("userA"));
+//        memberRepository.save(new Member("userA"));
+        for (int i = 0; i < 100; i++) {
+            memberRepository.save(new Member("user" + i, i));
+        }
     }
 }
