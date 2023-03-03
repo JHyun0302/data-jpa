@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom, JpaSpecificationExecutor<Member> {
     /**
      * JPA 메서드 이름으로 쿼리 생성
      */
@@ -121,5 +121,38 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Member> findLockByUsername(String username);
+
+    /**
+     * 인터페이스 기반
+     * Projections: 엔티티 대신에 DTO를 편리하게 조회
+     * - 전체 엔티티가 아닌 회원이름만 딱 조회
+     */
+//    List<UsernameOnly> findProjectionsByUsername(@Param("username") String username);
+
+    /**
+     * 클래스 기반
+     */
+//    List<UsernameOnlyDto> findProjectionsByUsername(@Param("username") String username);
+
+    /**
+     * 동적 Projections
+     */
+    <T> List<T> findProjectionsByUsername(String username, Class<T> type);
+
+    /**
+     * 네이티브 쿼리
+     */
+    @Query(value = "select * from member where username = ?", nativeQuery = true)
+    Member findByNativeQuery(String username);
+
+    /**
+     * 네이티브 쿼리 + Projections
+     */
+    @Query(value = "select m.member_id as id, m.username, t.name as teamName " +
+            "from member m left join team t on m.team_id = t.team_id",
+            countQuery = "select count(*) from member",
+            nativeQuery = true)
+    Page<MemberProjection> findByNativeProjection(Pageable pageable);
+
 }
 
