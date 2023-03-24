@@ -50,7 +50,7 @@ class MemberRepositoryTest {
         Member savedMember = memberRepository.save(member);
 
         Member findMember = memberRepository.findById(savedMember.getId()).get();
-
+//        memberRepository.findById(savedMember.getId()).orElseThrow(() -> new NoSuchElementException("No value present")); //정석
         assertThat(findMember.getId()).isEqualTo(member.getId());
         assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
 
