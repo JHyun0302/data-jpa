@@ -1,9 +1,9 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:test
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+  #  datasource:
+  #    url: jdbc:h2:mem:test
+  #    username: sa
+  #    password:
+  #    driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
@@ -13,11 +13,11 @@ spring:
         #      show_sql: true      -> System.out
         format_sql: true
 
-data:
-  web:
-    pageable:
-      default-page-size: 10 #기본 page 사이즈(Web 확장)
-      max-page-size: 2000 #최대 page 사이즈(Web 확장)]
+  data:
+    web:
+      pageable:
+        default-page-size: 10 #기본 page 사이즈(Web 확장)
+        max-page-size: 2000 #최대 page 사이즈(Web 확장)]
 
 logging.level:
   org.hibernate.SQL: debug
