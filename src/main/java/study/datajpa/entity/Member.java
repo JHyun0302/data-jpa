@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //JPA - 기본적으로 protected 기본 생성자 필요! (프록시 관련)
 @ToString(of = {"id", "username", "age"}) // 객체 바로 찍을 때 사용(연괸관계 필드는 ToString 제외(team))
-@NamedQuery(
+@NamedQuery( //거의 안씀!
         name = "Member.findByUsername",
         query = "select m from Member m where m.username =: username"
 )
