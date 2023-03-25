@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
+import study.datajpa.repository.InterfaceImpl.MemberQueryRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -100,6 +101,10 @@ class MemberRepositoryTest {
         assertThat(result.size()).isEqualTo(1);
     }
 
+    /**
+     * Spring Data JPA 간단한 Crud
+     * - find...By, count...By, exists...By, delete...By, find...DistinctBy, findFirst3
+     */
     @Test
     public void findHelloBy() { //전체 조회 test
         Member m1 = new Member("AAA", 10);
@@ -119,6 +124,9 @@ class MemberRepositoryTest {
         System.out.println("delete = " + delete);
     }
 
+    /**
+     * NamedQuery
+     */
     @Test
     public void testNamedQuery() {
         Member m1 = new Member("AAA", 10);
@@ -131,6 +139,9 @@ class MemberRepositoryTest {
         assertThat(findMember).isEqualTo(m1);
     }
 
+    /**
+     * @Query(jpql)
+     */
     @Test
     public void testQuery() {
         Member m1 = new Member("AAA", 10);
@@ -142,6 +153,9 @@ class MemberRepositoryTest {
         assertThat(result.get(0)).isEqualTo(m1);
     }
 
+    /**
+     * @Query(jpql): 단순히 값 하나를 조회
+     */
     @Test
     public void findUsernameList() {
         Member m1 = new Member("AAA", 10);
@@ -155,6 +169,9 @@ class MemberRepositoryTest {
         }
     }
 
+    /**
+     * new operation 문법...return Dto
+     */
     @Test
     public void findUsernameDto() {
         Team team = new Team("teamA");
@@ -164,13 +181,15 @@ class MemberRepositoryTest {
         m1.setTeam(team);
         memberRepository.save(m1);
 
-
         List<MemberDto> memberDto = memberRepository.findMemberDto();
         for (MemberDto dto : memberDto) {
             System.out.println("dto = " + dto);
         }
     }
 
+    /**
+     * 컬렉션 파라미터 바인딩: Collection 타입으로 in절 지원
+     */
     @Test
     public void findByNames() {
         Member m1 = new Member("AAA", 10);
@@ -184,6 +203,12 @@ class MemberRepositoryTest {
         }
     }
 
+    /**
+     * 반환 타입(단건, 컬렉션, Optional)
+     * - 단건 조회: 결과 없음 - null
+     * - 컬렉션: 결과 없음 - 빈 컬렉션
+     * 2건 이상 - NoUniqueResultException 발생
+     */
     @Test
     public void returnType() {
         Member m1 = new Member("AAA", 10);
@@ -195,7 +220,7 @@ class MemberRepositoryTest {
         Member aaa1 = memberRepository.findMemberByUsername("AAA");
         Optional<Member> aaa2 = memberRepository.findOptionalByUsername("AAA");
 
-        List<Member> asdfasf = memberRepository.findListByUsername("asdfasf");
+        List<Member> asdfasf = memberRepository.findListByUsername("asdfasf"); // 데이터 없는 경우
         assertThat(asdfasf.size()).isEqualTo(0);
     }
 
@@ -217,10 +242,10 @@ class MemberRepositoryTest {
 
         //when
         Page<Member> page = memberRepository.findByAge(age, pageRequest);
-//        Page<Member> page = memberRepository.findTop3ByAge(age); //똑같은 기능!
+//        Page<Member> page = memberRepository.findTop3ByAge(age); // 3건만 조회
 
         /**
-         * 페이지 유지하면서 엔티티 -> DTO 변환
+         * 페이지 유지하면서 엔티티 -> DTO 변환 (API 반환)
          */
         Page<MemberDto> toMap = page.map(m -> new MemberDto(m.getId(), m.getUsername(), null)); //API 반환 가능
 
@@ -232,9 +257,9 @@ class MemberRepositoryTest {
         }
 
         assertThat(content.size()).isEqualTo(3); //조회된 데이터 수
-        assertThat(page.getTotalElements()).isEqualTo(5); //전체 데이터 수
+        assertThat(page.getTotalElements()).isEqualTo(105); //전체 데이터 수
         assertThat(page.getNumber()).isEqualTo(0); //페이지 번호
-        assertThat(page.getTotalPages()).isEqualTo(2); //전체 페이지 번호
+        assertThat(page.getTotalPages()).isEqualTo(35); //전체 페이지 번호
         assertThat(page.isFirst()).isTrue(); //첫번째 항목인가?
         assertThat(page.hasNext()).isTrue(); //다음 페이지가 있는가?
     }
@@ -251,14 +276,14 @@ class MemberRepositoryTest {
         //when
         int resultCount = memberRepository.bulkAgePlus(20);
         em.flush();
-//        em.clear(); //DB는 41살, but 영속성 컨텍스트 데이터: 40... 즉 영속성 컨텍스트 data 날려버리기 or @Modifying 속성 사용
+//        em.clear(); //DB는 41살, but 영속성 컨텍스트 데이터: 40... 즉 영속성 컨텍스트 data 날려버리기 or @Modifying(clearAutomatically = true) 속성 사용
 
         List<Member> result = memberRepository.findByUsername("member5");
         Member member5 = result.get(0);
         System.out.println("member5 = " + member5);
 
         //then
-        assertThat(resultCount).isEqualTo(3);
+        assertThat(resultCount).isEqualTo(83);
     }
 
     /**
@@ -274,7 +299,7 @@ class MemberRepositoryTest {
         teamRepository.save(teamA);
         teamRepository.save(teamB);
         Member member1 = new Member("member1", 10, teamA);
-        Member member2 = new Member("member1", 10, teamB);
+        Member member2 = new Member("member2", 10, teamB);
         memberRepository.save(member1);
         memberRepository.save(member2);
 
@@ -282,20 +307,22 @@ class MemberRepositoryTest {
         em.clear();
 
         //when
-//        List<Member> members = memberRepository.findAll(); //member 모두 찾기 (1)
+//        List<Member> members = memberRepository.findAll(); //member 모두 찾기: N+1 문제 발생! (1)
 //        List<Member> members = memberRepository.findMemberFetchJoin(); // 페치 조인으로 N+1 해결 ---> 직접 JPQL 써야하는 단점
 //        List<Member> members = memberRepository.findAll(); //Entity Graph 써서 N+1 해결
         List<Member> members = memberRepository.findEntityGraphByUsername("member1"); //메서드 이름으로 Entity Graph 사용
 
+        //then
         for (Member member : members) {
             System.out.println("member = " + member.getUsername());
             System.out.println("member.teamClass = " + member.getTeam().getClass()); //Lazy 설정이라 가짜 프록시를 초기화해서 찍힘! (N) - 해결
             System.out.println("member.team = " + member.getTeam().getName()); //team의 진짜 이름 얻기 (쿼리 나감) (N) - 해결
         }
-
-        //then
     }
 
+    /**
+     * JPA Hint & Lock
+     */
     @Test
     public void queryHint() {
         //given
