@@ -10,7 +10,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 
 /**
- * 등록자 수정자 정보가 필요한 테이블에만 넣어주기
+ * 등록자, 수정자 정보가 필요한 테이블에만 넣어주기
  */
 @EntityListeners(AuditingEntityListener.class)
 @Getter
