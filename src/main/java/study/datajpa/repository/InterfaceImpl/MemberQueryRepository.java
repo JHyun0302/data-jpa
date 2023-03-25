@@ -1,4 +1,4 @@
-package study.datajpa.repository;
+package study.datajpa.repository.InterfaceImpl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -8,10 +8,10 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
- * 간단한 내용은 스프링 data JPA 쓰고
- * 복잡한 JPQL을 따로 리포지토리에 작성
- * <p>
- * - 리포지토리 세분화
+ * Custom 기능에 다 몰아넣지 말고
+ * - 핵심 biz 기능과 아닌 것 분리
+ * - life cycle에 따라 뭘 변경
+ * 고려해서 repository 쪼개기
  */
 @Repository
 @RequiredArgsConstructor
