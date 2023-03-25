@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.util.Optional;
 import java.util.UUID;
 
-@EnableJpaAuditing//(modifyOnCreate = false) : update = null (비권장!) //등록일/수정일 같은 공통 관심사
+@EnableJpaAuditing//(modifyOnCreate = false) : update = null (비권장!) //등록일, 수정일 같은 공통 관심사
 @SpringBootApplication
 public class DataJpaApplication {
     public static void main(String[] args) {
