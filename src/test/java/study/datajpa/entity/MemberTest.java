@@ -51,6 +51,9 @@ class MemberTest {
         }
     }
 
+    /**
+     * Auditing Test
+     */
     @Test
     public void JpaEventBaseEntity() throws Exception {
         //given
