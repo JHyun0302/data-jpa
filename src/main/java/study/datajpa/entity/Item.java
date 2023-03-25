@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 
 /**
  * 새로운 엔티티 구별하는 방법
- * - 문제: @GeneratedValue 안 쓰고 @Id 정하는 경우 값을 넘겨주므로 null or 0 이 아니게 됨!
- * -> "새로운 엔티티가 아니라고 판단!!!"
+ * - 문제: @GeneratedValue 안 쓰고 @Id 할당하는 경우 값을 넘겨주므로 null or 0 이 아니게 됨!
+ * -> "새로운 엔티티가 아니라고 판단!!!" => em.merge()!!
  * - sol: persistable 인터페이스 구현해서 판단 로직 변경 가능!
  */
 @Entity
