@@ -8,6 +8,9 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 순수 JPA
+ */
 @Repository
 public class MemberJpaRepository {
     @PersistenceContext
@@ -59,6 +62,7 @@ public class MemberJpaRepository {
 
     /**
      * 페이징과 정렬
+     * - 조건: 나이 10살, 이름 내림차순, 첫 번째 페이지, 페이지당 3건씩
      */
     public List<Member> findByPage(int age, int offset, int limit) {
         return em.createQuery("select m from Member m where m.age = :age order by m.username desc")
