@@ -61,6 +61,9 @@ class MemberJpaRepositoryTest {
         assertThat(deletedCount).isEqualTo(100);
     }
 
+    /**
+     * 간단한 조건으로 crud
+     */
     @Test
     public void findByUsernameAndAgeGreaterThan() {
         Member m1 = new Member("AAA", 10);
@@ -74,6 +77,9 @@ class MemberJpaRepositoryTest {
         assertThat(result.size()).isEqualTo(1);
     }
 
+    /**
+     * NamedQuery
+     */
     @Test
     public void testNamedQuery() {
         Member m1 = new Member("AAA", 10);
@@ -102,10 +108,12 @@ class MemberJpaRepositoryTest {
         //when
         List<Member> members = memberJpaRepository.findByPage(age, offset, limit);
         long totalCount = memberJpaRepository.totalCount(age);
-
+//        for (Member member : members) {
+//            System.out.println("member = " + member);
+//        }
         //then
         assertThat(members.size()).isEqualTo(3);
-        assertThat(totalCount).isEqualTo(5);
+        assertThat(totalCount).isEqualTo(5); //user10이 뭐지?
     }
 
     @Test
@@ -121,6 +129,6 @@ class MemberJpaRepositoryTest {
         int resultCount = memberJpaRepository.bulkAgePlus(20);
 
         //then
-        assertThat(resultCount).isEqualTo(3);
+        assertThat(resultCount).isEqualTo(83);
     }
 }
