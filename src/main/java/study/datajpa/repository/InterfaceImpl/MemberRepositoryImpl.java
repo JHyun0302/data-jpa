@@ -1,4 +1,4 @@
-package study.datajpa.repository;
+package study.datajpa.repository.InterfaceImpl;
 
 import lombok.RequiredArgsConstructor;
 import study.datajpa.entity.Member;
