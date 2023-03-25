@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
+import study.datajpa.repository.InterfaceImpl.MemberRepositoryCustom;
 
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,24 +33,25 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 
     /**
      * JPA NamedQuery: 실무에서 잘 안 씀
-     *
-     * @Query 생략해도 가능 -> 자동으로 JpaRepository<Member> + 메서드 명(findByUsername)
+     * - @Query 생략해도 가능 -> 자동으로 JpaRepository<Member> + 메서드 명(findByUsername)
      */
 //    @Query(name = "Member.findByUsername")
     List<Member> findByUsername(@Param("username") String username);
 
     /**
      * @Query, 리포지토리 메소드에 쿼리 정의하기: 실무에서 자주 사용!
+     * - 장점: 'findByUsernameAndAgeGreaterThan'처럼 조건이 많아지면 메서드명이 너무 길어지는 단점 방지!
      */
     @Query("select m from Member m where m.username = :username and m.age = :age")
     List<Member> findUser(@Param("username") String username, @Param("age") int age);
 
     /**
-     * @Query, 값, DTO 조회하기
+     * @Query(jpql) - 값, DTO 조회하기
      */
     @Query("select m.username from Member m")
     List<String> findUsernameList();
 
+    //new operation 문법 -> return Dto  ... QueryDsl 쓰기!!
     @Query("select new study.datajpa.dto.MemberDto(m.id, m.username, t.name)" +
             " from Member m join m.team t")
     List<MemberDto> findMemberDto();
@@ -59,7 +60,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
      * 컬렉션 파라미터 바인딩: Collection 타입으로 in절 지원
      */
     @Query("select m from  Member  m where m.username in :names")
-    List<Member> findByNames(@Param("names") Collection<String> names);
+    List<Member> findByNames(@Param("names") List<String> names);
 
     /**
      * 반환 타입
@@ -72,7 +73,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 
     /**
      * 페이징과 정렬
-     * count 쿼리 분리 가능 -> 성능 향상
+     * count 쿼리 분리 가능 -> 성능 향상 (count하는데 join 필요 x)
      */
     @Query(value = "select m from Member m left join m.team t",
             countQuery = "select count(m) from Member m")
@@ -93,7 +94,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     List<Member> findMemberFetchJoin();
 
     /**
-     * "EntityGraph"로 JPQL없이 페치 조인 사용하기!
+     * "EntityGraph" - JPQL없이 페치 조인 사용하기!
      */
     //공통 메서드 오버라이드
     @Override
@@ -106,16 +107,15 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     List<Member> findMemberEntityGraph();
 
     //메서드 이름으로 쿼리에서 특히 편리하다.
-//    @EntityGraph(attributePaths = {"team"})
-    @EntityGraph("Member.all")
-    //NamedEntityGraph
+    @EntityGraph(attributePaths = {"team"})
+//    @EntityGraph("Member.all")   //NamedEntityGraph: 잘 안씀
     List<Member> findEntityGraphByUsername(@Param("username") String name);
 
     /**
      * JPA Hint & Lock
-     * .findById() 사용시 변경감지 때문에 원복 data 저장해놓음!(만약 100% 조회용으로 메서드 쓴다면... 메모리 낭비하는 꼴!)
+     * .findById() 사용시 변경감지 때문에 원복 data 저장해놓음!(만약 100% 조회용으로 메서드 쓴다면... 메모리 낭비!!)
      */
-    //readOnly: true - SnapShot 안 만듬
+    //readOnly: true - SnapShot 안 만듬 (성능 최적화)
     @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
     Member findReadOnlyByUsername(String username);
 
