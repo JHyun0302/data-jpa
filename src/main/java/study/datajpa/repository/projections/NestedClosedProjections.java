@@ -1,11 +1,10 @@
-package study.datajpa.repository;
+package study.datajpa.repository.projections;
 
 /**
  * 중첩 구조 처리
  */
 public interface NestedClosedProjections {
     String getUsername();
-
 
     TeamInfo getTeam();
 
