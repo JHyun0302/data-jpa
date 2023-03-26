@@ -11,6 +11,7 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 import study.datajpa.repository.InterfaceImpl.MemberQueryRepository;
+import study.datajpa.repository.projections.NestedClosedProjections;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -406,7 +407,7 @@ class MemberRepositoryTest {
         em.clear();
 
         //when
-        //Probe 생성
+        //Probe 생성: 실제 도메인 객체
         Member member = new Member("m1");
         Team team = new Team("teamA");
         member.setTeam(team);
@@ -422,6 +423,10 @@ class MemberRepositoryTest {
         //then
         assertThat(result.get(0).getUsername()).isEqualTo("m1");
     }
+
+    /**
+     * Projections: select 절에 들어갈 data
+     */
 
     @Test
     public void projections() {
@@ -448,7 +453,7 @@ class MemberRepositoryTest {
 //        for (UsernameOnlyDto usernameOnly : result) {
 //            System.out.println("usernameOnly = " + usernameOnly);
 //        }
-        //동적
+        //동적 projections(class 타입에 맞춰 동작)
 //        List<UsernameOnly> result = memberRepository.findProjectionsByUsername("m1", UsernameOnly.class);
 //        for (UsernameOnly usernameOnly : result) {
 //            System.out.println("usernameOnly = " + usernameOnly);
