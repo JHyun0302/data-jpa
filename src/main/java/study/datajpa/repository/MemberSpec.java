@@ -10,6 +10,7 @@ import javax.persistence.criteria.JoinType;
 
 /**
  * 명세: JPA Criteria
+ * - 실무 사용 X
  */
 public class MemberSpec {
     //팀 이름이 검색 조건
