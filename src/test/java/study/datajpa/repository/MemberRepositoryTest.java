@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
-import study.datajpa.repository.InterfaceImpl.MemberQueryRepository;
+import study.datajpa.repository.custom.MemberQueryRepository;
 import study.datajpa.repository.projections.NestedClosedProjections;
 
 import javax.persistence.EntityManager;
@@ -243,6 +243,7 @@ class MemberRepositoryTest {
 
         //when
         Page<Member> page = memberRepository.findByAge(age, pageRequest);
+//        Slice<Member> slice = memberRepository.findByAge(age, pageRequest);
 //        Page<Member> page = memberRepository.findTop3ByAge(age); // 3건만 조회
 
         /**
