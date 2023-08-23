@@ -27,6 +27,7 @@ public class MemberController {
 
     /**
      * 도메인 클래스 컨버터 사용 후
+     * - Member는 조회용으로만 쓰기!
      */
 
     @GetMapping("/members2/{id}")
@@ -38,7 +39,8 @@ public class MemberController {
      * Web 확장 - 페이징과 정렬(page, size, sort)
      * http://localhost:8080/members?page=0&size=3&sort=id,desc&sort=username,desc
      *
-     * @PageableDefault: 개별 설정... 글로벌 설정(.yml)
+     * @PageableDefault : 개별 설정
+     * application.yml : 글로벌 설정
      */
     @GetMapping("/members")
     public Page<MemberDto> list(@PageableDefault(size = 5, sort = "username", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -49,6 +51,7 @@ public class MemberController {
         //Page 내용 -> Dto 변환
         return page.map(MemberDto::new);
     }
+
 
     @PostConstruct
     public void init() {
