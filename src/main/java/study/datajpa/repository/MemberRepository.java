@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
-import study.datajpa.repository.InterfaceImpl.MemberRepositoryCustom;
+import study.datajpa.repository.custom.MemberRepositoryCustom;
 
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
@@ -74,10 +74,17 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     /**
      * 페이징과 정렬
      * count 쿼리 분리 가능 -> 성능 향상 (count하는데 join 필요 x)
+     * <p>
+     * Page : 추가 count 쿼리 결과를 포함하는 페이징
+     * Slice : 추가 count 쿼리 없이 다음 페이지만 확인 가능 (내부적으로 limit + 1 조회)
+     * List : 추가 count 쿼리 없이 결과만 반환
      */
     @Query(value = "select m from Member m left join m.team t",
             countQuery = "select count(m) from Member m")
     Page<Member> findByAge(int age, Pageable pageable);
+
+//    Slice<Member> findByAge(int age, Pageable pageable);
+
 
     /**
      * 벌크성 수정 쿼리: where 조건에 맞는 모든 쿼리 수정
@@ -114,6 +121,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     /**
      * JPA Hint & Lock
      * .findById() 사용시 변경감지 때문에 원복 data 저장해놓음!(만약 100% 조회용으로 메서드 쓴다면... 메모리 낭비!!)
+     * -> @QueryHints 를 통해 readOnly로 만들어서 스냅샷 생성 X
      */
     //readOnly: true - SnapShot 안 만듬 (성능 최적화)
     @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
