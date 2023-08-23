@@ -1,4 +1,4 @@
-package study.datajpa.repository.InterfaceImpl;
+package study.datajpa.repository.custom;
 
 import study.datajpa.entity.Member;
 
