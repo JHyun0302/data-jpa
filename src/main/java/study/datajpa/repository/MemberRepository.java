@@ -131,24 +131,29 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     List<Member> findLockByUsername(String username);
 
     /**
-     * 인터페이스 기반
      * Projections: 엔티티 대신에 DTO를 편리하게 조회
+     * 인터페이스 기반
      * - 전체 엔티티가 아닌 회원이름만 딱 조회
      */
 //    List<UsernameOnly> findProjectionsByUsername(@Param("username") String username);
 
     /**
      * 클래스 기반
+     * 파라미터 명(@Param)으로 매칭
      */
 //    List<UsernameOnlyDto> findProjectionsByUsername(@Param("username") String username);
 
     /**
-     * 동적 Projections
+     * 동적 Projections : Generic Type 사용
      */
     <T> List<T> findProjectionsByUsername(String username, Class<T> type);
 
     /**
      * 네이티브 쿼리
+     * 한계
+     * 1. Sort 파라미터를 통한 정렬이 정상 동작하지 않을 수 있음.
+     * 2. JPQL처럼 애플리케이션 로딩 시점에 문법 확인 불가
+     * 3. 동적 쿼리 불가
      */
     @Query(value = "select * from member where username = ?", nativeQuery = true)
     Member findByNativeQuery(String username);
