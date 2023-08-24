@@ -388,7 +388,8 @@ class MemberRepositoryTest {
 
     /**
      * Query By Example
-     * - 단점: Outer(left) 조인 안됨, 정확한 매칭(=)만 지원  => QueryDsl 쓰자!!
+     * - 동적 쿼리 생성 가능. 도메인 객체를 그대로 사용.
+     * - 단점: Outer 조인 안됨. Inner Join만 지원 => QueryDsl 쓰자!!
      * - Probe: 필드에 데이터가 있는 실제 도메인 객체
      * - ExampleMatcher: 특정 필드를 일치시키는 상세한 정보 제공, 재사용 가능
      * - Example: Probe & ExampleMatcher 구성, 쿼리 생성하는데 사용
@@ -413,10 +414,11 @@ class MemberRepositoryTest {
         Team team = new Team("teamA");
         member.setTeam(team);
 
-        //ExampleMatcher 생성, age 프로퍼티는 무시
+        //ExampleMatcher : age 프로퍼티는 무시
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withIgnorePaths("age");
 
+        //Example
         Example<Member> example = Example.of(member, matcher);
 
         List<Member> result = memberRepository.findAll(example);
@@ -426,7 +428,7 @@ class MemberRepositoryTest {
     }
 
     /**
-     * Projections: select 절에 들어갈 data
+     * Projections: select 절에 들어갈 data (객체 전체를 조회하는게 아니라 name 같이 값 1개만 찍어서 가져올 때)
      */
 
     @Test
@@ -470,7 +472,7 @@ class MemberRepositoryTest {
     }
 
     /**
-     * 네이티브 쿼리
+     * 네이티브 쿼리 - 가급적 사용 X.
      */
 
     @Test
