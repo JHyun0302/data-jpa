@@ -7,7 +7,7 @@ package study.datajpa.repository.projections;
 public class UsernameOnlyDto {
     private final String username;
 
-    public UsernameOnlyDto(String username) { //"username" 매칭
+    public UsernameOnlyDto(String username) { //"username" 파라미터로 매칭
         this.username = username;
     }
 
