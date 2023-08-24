@@ -9,7 +9,8 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 
 /**
- * 명세: JPA Criteria
+ * 명세: JPA Criteria 사용해서 Specification 구현
+ * JPA Criteria -> JPQL 생성 -> 동적 쿼리 생성
  * - 실무 사용 X
  */
 public class MemberSpec {
